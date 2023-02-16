@@ -1,0 +1,87 @@
+import java.util.* ;
+import java.io.*; 
+/************************************************************
+
+    Following is the TreeNode class structure
+
+    class TreeNode<T> 
+    {
+       public:
+        T data;
+        TreeNode<T> left;
+        TreeNode<T> right;
+
+        TreeNode(T data) 
+        {
+            this.data = data;
+            left = null;
+            right = null;
+        }
+    };
+
+************************************************************/
+
+import java.util.ArrayList;
+
+public class Solution 
+{
+    public static ArrayList<Integer> verticalOrderTraversal(TreeNode<Integer> root) 
+    {
+        //    Write your code here.
+            ArrayList<Integer> result=new ArrayList<>();
+            if(root==null)return result;
+
+
+            Queue<Node> queue=new LinkedList<>();
+            queue.add(new Node(root,0,0));
+            // map<vertical,map of(level,nodes)>
+            TreeMap<Integer,TreeMap<Integer,ArrayList<Integer>>> map=new TreeMap<>();
+            while(!queue.isEmpty())
+            {
+                Node cur=queue.remove();
+                TreeNode node= cur.node;
+                int ver=cur.ver;
+                int level=cur.level;
+                // if map does not contain this vertical yet,add vertical
+                if(!map.containsKey(ver))
+                map.put(ver,new TreeMap<Integer,ArrayList<Integer>>());
+                // if map does not contain level at that vertical,add
+                if(!map.get(ver).containsKey(level))
+                map.get(ver).put(level,new ArrayList<Integer>());
+                // add value to its coordinates
+                map.get(ver).get(level).add((int)node.data);
+                // check for left child
+                if(node.left!=null)queue.add(new Node(node.left,ver-1,level+1));
+                //check for right child
+                if(node.right!=null)queue.add(new Node(node.right,ver+1,level+1));
+            }
+
+            // adding into result;
+
+            for(TreeMap<Integer,ArrayList<Integer>> tv:map.values())
+            {
+                for(ArrayList<Integer> ar:tv.values())
+                {
+                    for(int it:ar)
+                    result.add(it);
+                }
+            }
+
+
+
+            return result;
+    }
+}
+
+class Node
+{
+    TreeNode<Integer> node;
+    int ver;
+    int level;
+    public Node(TreeNode<Integer> node,int ver,int level)
+    {
+        this.node=node;
+        this.ver=ver;
+        this.level=level;
+    }     
+}
